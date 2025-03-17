@@ -1,0 +1,66 @@
+/*
+Invoice tablosunda, tüm değerleri NULL olan kayıtların sayısını bulmanız
+isteniyor.
+Bu işlemi tek bir sorgu ile yapmalısınız. Sorguyu yazdıktan sonra, PostgreSQL’in
+sol alt kısmındaki Row sayısını, SQL sorgunuzda yorum satırında belirtmeniz
+gerekmektedir.
+*/
+SELECT COUNT(*) AS null_sayisi
+FROM "invoice"
+WHERE "invoice_id" IS NULL 
+  AND "customer_id" IS NULL 
+  AND "invoice_date" IS NULL 
+  AND "billing_address" IS NULL 
+  AND "billing_city" IS NULL 
+  AND "billing_state" IS NULL 
+  AND "billing_country" IS NULL 
+  AND "billingpostal_code" IS NULL 
+  AND "total" IS NULL;
+
+  -- Row sayısı: 0
+
+/*ANLATIM : BU YUKARI SIRALADIĞIM İNVOİCE DAKİ BÜTÜN DEĞERLERİ 
+NULL MU DİYE BAKIYORUZ VE NULL İSE COUNT İLE SAYIYORUZ SONRA 
+DA KAÇ TANE NULL VARSA ONU YAZIYOR SONUÇ OLARAK.*/
+
+
+
+/*
+2. Koordinasyondaki kişiler, Total değerlerinde bir hata olduğunu belirtiyorlar.
+Bu değerlerin iki katını görmek ve eski versiyonlarıyla birlikte karşılaştırmak için bir
+sorgu yazmanız isteniyor. Ayrıca, verilerin daha rahat takip edilebilmesi için,
+tablonun yeni versiyonuna ait kolona göre büyükten küçüğe sıralama yapılması
+isteniyor.
+*/
+
+SELECT 
+	"invoice_id",
+	"customer_id",
+	"total" AS eski_total,
+	"total" * 2 AS yeni_total
+FROM "invoice"
+ORDER BY yeni_total DESC ; 
+
+/*ANLATIM : BURADA DA YİNE BU DEĞERLERİ SEÇİP TOTAL'İ 2 İLE ÇARPIP
+YENİ TOTAL DİYORUZ VE BU YENİ TOTALİ BÜYÜKTEN KÜÇÜĞE DESC İLE SIRALIYORUZ
+*/
+
+/*
+Adres kolonundaki verileri, soldan 3 karakter ve sağdan 4 karakter alarak
+birleştirmeniz ve "Açık Adres" olarak yazmanız isteniyor. Ayrıca, bu yeni açık adresi
+2013 yılı ve 8. ay’a göre filtrelemeniz gerekiyor.
+*/
+
+SELECT 
+	"invoice_id",
+	"customer_id",
+	"billing_address",
+	LEFT("billing_address",3) || '...' || RIGHT("billing_address",4) AS "Açık Adres"
+FROM "invoice"
+WHERE EXTRACT (YEAR FROM "invoice_date") = 2013 
+	AND EXTRACT (MONTH FROM "invoice_date") = 8;
+
+/* ANLATIM : LEFT İLE BİLLİNG ADDRESS'İN SOLDAN 3 KARAKTERİNİ VE 
+RİGHT İLE SAĞDAN 4 KARAKTERİNİ ALIYORUZ VE AS İLE AÇIK ADRES OLARAK 
+TANIMLIYORUZ VE SONRA EXTRACT 
+İLE İNVOİCE_DATE'İN 2013 YILINDAKİ VE 8. AYIN  VERİLERİNİ ÇEKİYORUZ*/
